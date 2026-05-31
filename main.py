@@ -14,7 +14,7 @@ dp = Dispatcher()
 # Кнопка для запуска WebApp
 def get_webapp_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Открыть блокнот", web_app=WebAppInfo(url="ТВОЙ_LINK_НА_HTML_ИЛИ_GITHUB_PAGES"))]
+        [InlineKeyboardButton(text="Открыть блокнот", web_app=WebAppInfo(url="https://nextdrop-developer.github.io/katia_notebook_bot/"))]
     ])
     return keyboard
 
