@@ -95,7 +95,7 @@ async def main():
 
     # запускаем бот (главный цикл)
     await dp.start_polling(bot)
-    )
+    
 
 if __name__ == "__main__":
     asyncio.run(main())
