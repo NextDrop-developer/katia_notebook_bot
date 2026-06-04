@@ -254,21 +254,37 @@
     }
 
     // Сбор данных и отправка боту
-    function submitOrder() {
-        const name = document.getElementById('userName').value.trim();
-        const country = document.getElementById('userCountry').value;
-        const phone = document.getElementById('userPhone').value.trim();
+    Function submitOrder() {
+    const name = document.getElementById('userName').value.trim();
+    const country = document.getElementById('userCountry').value;
+    const phone = document.getElementById('userPhone').value.trim();
 
-        if(!name || !country || !phone) {
-            alert('Пожалуйста, заполните все поля!');
-            return;
-        }
+    if (!name || !country || !phone) {
+        alert('Пожалуйста, заполните все поля!');
+        return;
+    }
 
-        const orderData = {
-            name,
-            country,
-            phone
-        };
+    const orderData = {
+        name: name,
+        country: country,
+        phone: phone,
+        username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username || "hidden"
+    };
+
+    fetch("https://YOUR-SERVER.onrender.com/order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+    });
+
+    nextSlide(4);
+
+    setTimeout(() => {
+        tg.close();
+    }, 2500);
+}
 
         // 🔥 важно: WebApp должен быть готов
         if (tg && tg.sendData) {
