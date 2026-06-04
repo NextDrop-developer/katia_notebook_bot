@@ -1,3 +1,4 @@
+print("file started")
 import asyncio
 import json
 import random
