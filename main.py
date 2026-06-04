@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 BOT_TOKEN = "8367392483:AAGVvgKEzJCPcWJIRgxZH_8pgOP6ueCtWL0"
-MANAGER_CHAT_ID = 791629478  # Сюда вставь числовой ID Кати (менеджера), чтобы ей летели лиды
+MANAGER_CHAT_ID = 6127906696  # Сюда вставь числовой ID Кати (менеджера), чтобы ей летели лиды
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
