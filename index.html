@@ -256,31 +256,29 @@
 
     // Сбор данных и отправка боту
     function submitOrder() {
-        const name = document.getElementById('userName').value.trim();
-        const country = document.getElementById('userCountry').value;
-        const phone = document.getElementById('userPhone').value.trim();
+    const name = document.getElementById('userName').value.trim();
+    const country = document.getElementById('userCountry').value;
+    const phone = document.getElementById('userPhone').value.trim();
 
-        if(!name || !country || !phone) {
-            alert('Пожалуйста, заполните все поля!');
-            return;
-        }
-
-        const orderData = {
-            name: name,
-            country: country,
-            phone: phone
-        };
-
-        // Отправляем данные бэкенду
-        tg.sendData(JSON.stringify(orderData));
-        
-        nextSlide(4);
-        
-        // Авто-закрытие через 2.5 секунды
-        setTimeout(() => {
-            tg.close();
-        }, 2500);
+    if(!name  !country  !phone) {
+        alert('Пожалуйста, заполните все поля!');
+        return;
     }
+
+    const orderData = {
+        name,
+        country,
+        phone
+    };
+
+    tg.sendData(JSON.stringify(orderData));
+
+    nextSlide(4);
+
+    setTimeout(() => {
+        tg.close();
+    }, 2500);
+}
 </script>
 </body>
 </html>
