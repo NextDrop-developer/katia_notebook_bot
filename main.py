@@ -1,102 +1,53 @@
-print("file started")
-import asyncio
-import json
+Import os
 import random
-import os
+import aiohttp
 from aiohttp import web
-from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-MANAGER_CHAT_ID = -1003728858401
+CHANNEL_ID = -1003728858401  # <-- твой канал
 
-if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN is not set in environment variables")
+API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher()
 
-# --- WEB SERVER (Render keep-alive) ---
-async def handle_health(request):
-    return web.Response(text="Bot is running...")
+async def send_to_telegram(text):
+    async with aiohttp.ClientSession() as session:
+        await session.post(API_URL, data={
+            "chat_id": CHANNEL_ID,
+            "text": text
+        })
 
-async def start_web_server():
-    app = web.Application()
-    app.router.add_get("/", handle_health)
 
-    runner = web.AppRunner(app)
-    await runner.setup()
-
-    port = int(os.environ.get("PORT", 10000))
-    site = web.TCPSite(runner, "0.0.0.0", port)
-
-    await site.start()
-
-# --- KEYBOARD ---
-def get_webapp_keyboard():
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="📒 Открыть блокнот",
-                web_app=WebAppInfo(
-                    url="https://nextdrop-developer.github.io/katia_notebook_bot/"
-                )
-            )
-        ]
-    ])
-
-# --- START ---
-@dp.message(F.text == "/start")
-async def cmd_start(message: Message):
-    await message.answer(
-        "Привет! Нажми на кнопку ниже, чтобы посмотреть блокнот и сделать предзаказ ✨",
-        reply_markup=get_webapp_keyboard()
-    )
-
-# --- WEBAPP DATA (ИСПРАВЛЕНО) ---
-@dp.message(F.web_app_data)
-async def handle_web_app_data(message: Message):
+async def order(request):
     try:
-        data = json.loads(message.web_app_data.data)
+        data = await request.json()
 
         name = data.get("name")
         country = data.get("country")
         phone = data.get("phone")
+        username = data.get("username", "Hidden")
 
-        order_number = random.randint(1000, 9999)
-        username = f"@{message.from_user.username}" if message.from_user.username else "Скрыт"
+        order_id = random.randint(1000, 9999)
 
-        await message.answer(
-            f"✅ Спасибо! Ваш заказ #{order_number} принят. Менеджер скоро свяжется с вами."
-        )
-
-        manager_msg = (
-            f"🚨 НОВЫЙ ПРЕДЗАКАЗ!\n\n"
-            f"📦 Номер: #{order_number}\n"
+        message = (
+            f"🛒 НОВЫЙ ЗАКАЗ #{order_id}\n\n"
             f"👤 Имя: {name}\n"
             f"🌍 Страна: {country}\n"
-            f"📞 Тел: {phone}\n"
-            f"💬 TG: {username}"
+            f"📞 Телефон: {phone}\n"
+            f"💬 TG: @{username}"
         )
 
-        await bot.send_message(MANAGER_CHAT_ID, manager_msg)
+        await send_to_telegram(message)
+
+        return web.json_response({"status": "ok", "order": order_id})
 
     except Exception as e:
-        print("ERROR web_app_data:", e)
+        return web.json_response({"status": "error", "error": str(e)})
 
-# --- MAIN ---
-async def main():
-    print("BOT STARTING...")
 
-    await bot.delete_webhook(drop_pending_updates=True)
+app = web.Application()
+app.router.add_post("/order", order)
 
-    # запускаем web server в фоне
-    asyncio.create_task(start_web_server())
-    print("WEB SERVER TASK STARTED")
-
-    # запускаем бот (главный цикл)
-    await dp.start_polling(bot)
-    
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    port = int(os.getenv("PORT", 8080))
+    web.run_app(app, host="0.0.0.0", port=port)
