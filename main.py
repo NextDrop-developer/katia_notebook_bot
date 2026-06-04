@@ -53,7 +53,7 @@ async def cmd_start(message: Message):
     )
 
 # --- WEBAPP DATA (ИСПРАВЛЕНО) ---
-@dp.message(lambda m: m.web_app_data is not None)
+@dp.message(F.web_app_data)
 async def handle_web_app_data(message: Message):
     try:
         data = json.loads(message.web_app_data.data)
