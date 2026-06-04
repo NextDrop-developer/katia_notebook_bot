@@ -3,305 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notebook Order</title>
-    <!-- Подключаем скрипт Телеграма -->
+    <title>Notebook.net Preorder</title>
+    <!-- Подключаем скрипт Телеграма, чтобы брать юзернейм -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #F9F6F0;
-            --text-color: #222222;
-            --btn-color: #1A1A1A;
-            --input-bg: #F1EDE4;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .slide {
-            display: none;
-        }
-        .slide.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .badge {
-            float: right;
-            font-size: 12px;
-            opacity: 0.5;
-            background: #E8E3D7;
-            padding: 4px 8px;
-            border-radius: 10px;
-        }
-        .product-img {
-            width: 100%;
-            height: auto;
-            max-height: 300px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: block;
-            background-color: #E2DDD3;
-        }
-        h2 {
-            font-weight: 600;
-            font-size: 24px;
-            margin-top: 0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .text-content {
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #444;
-            text-align: center;
-        }
-        .price-tag {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0;
-            text-align: center;
-        }
-        .color-edition-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .color-edition {
-            display: inline-block;
-            background: #E8E3D7;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        input, select {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid transparent;
-            background-color: var(--input-bg);
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 15px;
-            color: var(--text-color);
-            outline: none;
-            font-family: inherit;
-        }
-        input:focus, select:focus {
-            border-color: #C0B7A6;
-        }
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
-        }
-        .btn {
-            width: 100%;
-            background-color: var(--btn-color);
-            color: #fff;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            font-family: inherit;
-        }
-        .btn:active {
-            opacity: 0.9;
-        }
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 0;
-            margin-bottom: 15px;
-            float: left;
-        }
-        .header-row {
-            margin-bottom: 10px;
-            height: 30px;
-        }
-        .success-heart {
-            font-size: 60px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #F1C40F;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #F9F6F0; color: #222; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        
+        .app-container { background: #F9F6F0; width: 100%; max-width: 400px; height: 650px; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .slide { display: none; width: 100%; height: 100%; flex-direction: column; position: relative; }
+        .slide.active { display: flex; }
+
+        /* Нумерация слайдов */
+        .badge { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 6px; font-size: 11px; color: #666; font-weight: 500; z-index: 10; }
+        .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.05); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+
+        /* Слайд 1 */
+        .hero-img { width: 100%; height: 45%; object-fit: cover; }
+        .card-content { background: #FAF8F5; border-radius: 24px 24px 0 0; margin-top: -20px; padding: 30px 24px; flex-grow: 1; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.02); }
+        .text-p { font-size: 14px; line-height: 1.5; color: #555; }
+        
+        /* Кнопки */
+        .btn-black { background: #1A1A1A; color: #FFF; border: none; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; width: 100%; margin-top: auto; }
+        
+        /* Слайд 2 */
+        .product-container { padding: 40px 24px 24px 24px; display: flex; flex-direction: column; height: 100%; }
+        .prod-img { width: 100%; height: 240px; object-fit: contain; margin-bottom: 20px; }
+        .title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .price-box { font-size: 24px; font-weight: 700; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+        .old-price { text-decoration: line-through; color: #999; font-weight: 500; }
+        .tag { background: #EFEAE2; color: #7D7365; padding: 6px 12px; border-radius: 20px; font-size: 12px; width: fit-content; margin-bottom: 20px; }
+        .descr { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 12px; }
+
+        /* Слайд 3: Форма */
+        .form-container { padding: 60px 24px 24px 24px; display: flex; flex-direction: column; height: 100%; align-items: center; }
+        .form-title { font-size: 22px; font-weight: 700; margin-bottom: 30px; text-align: center; }
+        .input-field { width: 100%; background: #FAF8F5; border: 1px solid #EAE6DF; padding: 16px; border-radius: 12px; font-size: 13px; margin-bottom: 14px; color: #333; outline: none; }
+        .input-field::placeholder { color: #A09A90; font-size: 11px; letter-spacing: 0.5px; }
+
+        /* Слайд 4: Финал */
+        .merci-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 24px; }
+        .heart { font-size: 64px; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(255,200,0,0.2)); }
+        .merci-title { font-size: 26px; font-weight: 700; margin-bottom: 12px; }
+        .merci-sub { font-size: 14px; color: #666; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <!-- СЛАЙД 1: Интро -->
-    <div id="slide1" class="slide active">
-        <div class="header-row">
-            <div class="badge">1 / 4</div>
+    <!-- СЛАЙД 1 -->
+    <div class="slide active" id="s1">
+        <div class="badge">1 / 4</div>
+        <!-- Вставь сюда ссылку на свое фото девушки с блокнотом -->
+        <img class="hero-img" src="katya.jpg" alt="Book">
+        <div class="card-content">
+            <p class="text-p">Не для чужих ожиданий.<br>А чтобы наконец услышать себя.</p>
+            <p class="text-p">Я создала этот блокнот в момент, когда сама не понимала, куда иду.</p>
+            <button class="btn-black" onclick="nextSlide(2)">Сделать предзаказ</button>
+            <p class="text-p" style="font-size: 12px; color: #888;">Это пространство, где ты сможешь разложить всё по полочкам: мысли, чувства, желания. Без давления. В своём темпе.</p>
         </div>
-        
-        <img src="katya.jpg" alt="Катя" class="product-img">
-        
-        <div class="text-content">
-            Это пространство, где ты сможешь разложить всё по полочкам:<br>
-            мысли, чувства, желания.<br>
-            Без давления. В своём темпе.<br><br>
-            Я создала этот блокнот в период, когда сама пыталась услышать себя.<br><br>
-            Блокнот, который не требует от тебя быть лучше.<br>
-            Только честнее с собой. ✨
-        </div>
-        <button class="btn" onclick="nextSlide(2)">Сделать предзаказ</button>
     </div>
 
-    <!-- СЛАЙД 2: Описание продукта -->
-    <div id="slide2" class="slide">
-        <div class="header-row">
-            <button class="back-btn" onclick="nextSlide(1)">←</button>
-            <div class="badge">2 / 4</div>
+    <!-- СЛАЙД 2 -->
+    <div class="slide" id="s2">
+        <div class="badge">2 / 4</div>
+        <div class="product-container">
+            <!-- Вставь сюда ссылку на фото самого блокнота -->
+            <img class="prod-img" src="notebook.jpg">
+            <h2 class="title">Notebook.net</h2>
+            <div class="price-box">
+                <span class="old-price">49 €</span> <span>39 €</span>
+            </div>
+            <div class="tag">Color Edition: Beige</div>
+            
+            <p class="descr">Блокнот для тех, кто хочет услышать себя.</p>
+            <p class="descr">Поможет разобраться в мыслях, чувствах и желаниях.</p>
+            <p class="descr">Без давления. В своём темпе.</p>
+            
+            <button class="btn-black" onclick="nextSlide(3)">Далее</button>
         </div>
-        
-        <img src="notebook.jpg" alt="Блокнот" class="product-img">
-        
-      <h2>Notebook.net</h2>
-        <div class="price-tag">
-            <span style="font-size: 20px; color: #999; text-decoration: line-through; margin-right: 10px;">49 €</span>
-            <span style="color: #E74C3C;">39 €</span>
-        </div>
-        <div class="color-edition-container">
-            <div class="color-edition">Color Edition: Beige</div>
-        </div>
-        
-        <div class="text-content">
-            Блокнот для тех, кто хочет услышать себя.<br><br>
-            Поможет разобраться в мыслях, чувствах и желаниях.<br><br>
-            Без давления. В своём темпе.
-        </div>
-        <button class="btn" onclick="nextSlide(3)">Далее</button>
     </div>
 
-    <!-- СЛАЙД 3: Форма заказа -->
-    <div id="slide3" class="slide">
-        <div class="header-row">
-            <button class="back-btn" onclick="nextSlide(2)">←</button>
-            <div class="badge">3 / 4</div>
+    <!-- СЛАЙД 3 -->
+    <div class="slide" id="s3">
+        <button class="back-btn" onclick="nextSlide(2)">‹</button>
+        <div class="badge">3 / 4</div>
+        <div class="form-container">
+            <h2 class="form-title">Ваши данные</h2>
+            <input type="text" id="userName" class="input-field" placeholder="ИМЯ">
+            <input type="text" id="userPhone" class="input-field" placeholder="НОМЕР ТЕЛЕФОНА">
+            <input type="text" id="userCountry" class="input-field" placeholder="СТРАНА">
+            
+            <button class="btn-black" id="submitBtn" onclick="sendOrder()">Подтвердить</button>
         </div>
-        
-        <h2>Ваши данные</h2>
-        
-        <div class="form-group">
-            <input type="text" id="userName" placeholder="ИМЯ" required>
-        </div>
-        
-        <div class="form-group">
-            <select id="userCountry" required>
-                <option value="" disabled selected>СТРАНА</option>
-                <option value="🇷🇺 Россия">🇷🇺 Россия</option>
-                <option value="🇫🇷 Франция">🇫🇷 Франция</option>
-                <option value="Прочее">🌍 Прочее</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <input type="tel" id="userPhone" placeholder="ТЕЛЕФОН" required>
-        </div>
-        
-        <button class="btn" onclick="submitOrder()">Подтвердить</button>
     </div>
 
-    <!-- СЛАЙД 4: Экран "Merci" -->
-    <div id="slide4" class="slide">
-        <div class="header-row">
-            <div class="badge">4 / 4</div>
-        </div>
-        <div style="text-align: center; margin-top: 50px;">
-            <div class="success-heart">💛</div>
-            <h2>Merci</h2>
-            <p style="font-size: 16px; color: #555;">Мы скоро свяжемся с вами!</p>
+    <!-- СЛАЙД 4 -->
+    <div class="slide" id="s4">
+        <div class="badge">4 / 4</div>
+        <div class="merci-container">
+            <div class="heart">💛</div>
+            <h2 class="merci-title">Merci</h2>
+            <p class="merci-sub">Мы скоро свяжемся с вами!</p>
         </div>
     </div>
 
 </div>
 
 <script>
+    // Инициализация Telegram WebApp API
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); // Открывает приложение на весь экран телефона
 
-    function nextSlide(slideNumber) {
+    function nextSlide(slideNum) {
         document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-        document.getElementById('slide' + slideNumber).classList.add('active');
+        document.getElementById('s' + slideNum).classList.add('active');
     }
 
-    // Сбор данных и отправка боту
-    function submitOrder() {
-    const name = document.getElementById('userName').value.trim();
-    const country = document.getElementById('userCountry').value;
-    const phone = document.getElementById('userPhone').value.trim();
+    async function sendOrder() {
+        const name = document.getElementById('userName').value.trim();
+        const phone = document.getElementById('userPhone').value.trim();
+        const country = document.getElementById('userCountry').value.trim();
 
-    if (!name || !country || !phone) {
-        alert('Пожалуйста, заполните все поля!');
-        return;
-    }
-
-    const orderData = {
-        name: name,
-        country: country,
-        phone: phone,
-        username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username || "hidden"
-    };
-
-    fetch("https://katia-notebook-bot.onrender.com", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(orderData)
-    });
-
-    nextSlide(4);
-
-    setTimeout(() => {
-        tg.close();
-    }, 2500);
-}
-
-        // 🔥 важно: WebApp должен быть готов
-        if (tg && tg.sendData) {
-            tg.sendData(JSON.stringify(orderData));
-        } else {
-            alert("Ошибка Telegram WebApp");
+        if(!name || !phone || !country) {
+            alert('Пожалуйста, заполните все поля');
             return;
         }
 
-        nextSlide(4);
+        // Получаем юзернейм клиента напрямую из Телеграма
+        const username = tg.initDataUnsafe?.user?.username || "Не указан";
 
-        setTimeout(() => {
-            tg.close();
-        }, 2500);
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "Отправка...";
+        btn.disabled = true;
+
+        // ВАЖНО: Замени этот URL на адрес своего запущенного бэкенда (Шаг 4)
+        const BACKEND_URL = "https://твой-бэкенд.render.com/api/preorder";
+
+        try {
+            const response = await fetch(BACKEND_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, phone, country, username })
+            });
+
+            if(response.ok) {
+                nextSlide(4);
+            } else {
+                alert("Ошибка при отправке заказа. Попробуйте еще раз.");
+                btn.innerText = "Подтвердить";
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Ошибка сети.");
+            btn.innerText = "Подтвердить";
+            btn.disabled = false;
+        }
     }
 </script>
-</body>
-</html>
 </body>
 </html>
