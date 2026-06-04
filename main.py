@@ -85,10 +85,16 @@ async def handle_web_app_data(message: Message):
 
 # --- MAIN ---
 async def main():
+    print("BOT STARTING...")
+
     await bot.delete_webhook(drop_pending_updates=True)
-    await asyncio.gather(
-        start_web_server(),
-        dp.start_polling(bot)
+
+    # запускаем web server в фоне
+    asyncio.create_task(start_web_server())
+    print("WEB SERVER TASK STARTED")
+
+    # запускаем бот (главный цикл)
+    await dp.start_polling(bot)
     )
 
 if __name__ == "__main__":
