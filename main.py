@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-MANAGER_CHAT_ID = 6127906696
+MANAGER_CHAT_ID = -1003728858401
 
 if not BOT_TOKEN:
     raise ValueError("BOT_TOKEN is not set in environment variables")
