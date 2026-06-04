@@ -248,7 +248,6 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Функция переключения слайдов (Теперь исправлена!)
     function nextSlide(slideNumber) {
         document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
         document.getElementById('slide' + slideNumber).classList.add('active');
@@ -256,29 +255,37 @@
 
     // Сбор данных и отправка боту
     function submitOrder() {
-    const name = document.getElementById('userName').value.trim();
-    const country = document.getElementById('userCountry').value;
-    const phone = document.getElementById('userPhone').value.trim();
+        const name = document.getElementById('userName').value.trim();
+        const country = document.getElementById('userCountry').value;
+        const phone = document.getElementById('userPhone').value.trim();
 
-    if(!name || !country || !phone) {
-        alert('Пожалуйста, заполните все поля!');
-        return;
+        if(!name || !country || !phone) {
+            alert('Пожалуйста, заполните все поля!');
+            return;
+        }
+
+        const orderData = {
+            name,
+            country,
+            phone
+        };
+
+        // 🔥 важно: WebApp должен быть готов
+        if (tg && tg.sendData) {
+            tg.sendData(JSON.stringify(orderData));
+        } else {
+            alert("Ошибка Telegram WebApp");
+            return;
+        }
+
+        nextSlide(4);
+
+        setTimeout(() => {
+            tg.close();
+        }, 2500);
     }
-
-    const orderData = {
-        name,
-        country,
-        phone
-    };
-
-    tg.sendData(JSON.stringify(orderData));
-
-    nextSlide(4);
-
-    setTimeout(() => {
-        tg.close();
-    }, 2500);
-}
 </script>
+</body>
+</html>
 </body>
 </html>
