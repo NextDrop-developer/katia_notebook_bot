@@ -260,7 +260,7 @@
     const country = document.getElementById('userCountry').value;
     const phone = document.getElementById('userPhone').value.trim();
 
-    if(!name  !country  !phone) {
+    if(!name || !country || !phone) {
         alert('Пожалуйста, заполните все поля!');
         return;
     }
