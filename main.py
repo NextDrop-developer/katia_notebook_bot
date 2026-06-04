@@ -7,8 +7,8 @@ app = Flask(__name__)
 CORS(app)  # Разрешаем запросы от нашей веб-странички
 
 # --- НАСТРОЙКИ (Вставь свои данные) ---
-BOT_TOKEN = "СЮДА_ВСТАВЬ_ТОКЕН_БОТА"
-CHANNEL_ID = "СЮДА_ВСТАВЬ_ID_КАНАЛА"  # Например, -100123456789
+BOT_TOKEN = "8367392483:AAGVvgKEzJCPcWJIRgxZH_8pgOP6ueCtWL0"
+CHANNEL_ID = "-1003728858401"  # Например, -100123456789
 
 
 @app.route("/api/preorder", methods=["POST"])
