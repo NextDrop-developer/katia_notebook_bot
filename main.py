@@ -68,6 +68,26 @@ def handle_preorder():
     except Exception as e:
         return jsonify({"error": f"Внутренняя ошибка сервера: {str(e)}"}), 500
 
+# --- ДОБАВИТЬ ТОЛЬКО ЭТОТ КУСОЧЕК В САМЫЙ НИЗ ПЕРЕД IF __NAME__ ---
+
+@app.route("/telegram/webhook", methods=["POST"])
+def telegram_webhook():
+    update = request.json
+    if "message" in update and "text" in update["message"]:
+        text = update["message"]["text"]
+        chat_id = update["message"]["chat"]["id"]
+        
+        if text == "/start":
+            welcome_text = "Привет! В этом приложении ты сможешь сделать предзаказ на блокнот. ✨"
+            payload = {
+                "chat_id": chat_id,
+                "text": welcome_text
+            }
+            send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+            requests.post(send_url, json=payload)
+            
+    return "ok", 200
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
