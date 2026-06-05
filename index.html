@@ -122,14 +122,46 @@
     }
 
     async function sendOrder() {
-        const name = document.getElementById('userName').value.trim();
-        const phone = document.getElementById('userPhone').value.trim();
-        const country = document.getElementById('userCountry').value.trim();
+    const name = document.getElementById('userName').value.trim();
+    const phone = document.getElementById('userPhone').value.trim();
+    const country = document.getElementById('userCountry').value.trim();
 
-        if(!name || !phone || !country) {
-            alert('Пожалуйста, заполните все поля');
-            return;
+    if(!name || !phone || !country) {
+        alert('Пожалуйста, заполните все поля');
+        return;
+    }
+
+    const username = tg.initDataUnsafe?.user?.username || "Не указан";
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "Отправка...";
+    btn.disabled = true;
+
+    // ИСПРАВЛЕНО: Добавлен полный путь к эндпоинту бэкенда
+    const BACKEND_URL = "http://127.0.0.1:5000/api/preorder";
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, phone, country, username })
+        });
+
+        if(response.ok) {
+            nextSlide(4);
+        } else {
+            const errData = await response.json();
+            alert("Ошибка сервера: " + (errData.error || "Неизвестная ошибка"));
+            btn.innerText = "Подтвердить";
+            btn.disabled = false;
         }
+    } catch (err) {
+        console.error(err);
+        alert("Ошибка сети. Проверь, запущен ли бэкенд!");
+        btn.innerText = "Подтвердить";
+        btn.disabled = false;
+    }
+}
 
         // Получаем юзернейм клиента напрямую из Телеграма
         const username = tg.initDataUnsafe?.user?.username || "Не указан";
@@ -141,27 +173,47 @@
         // ВАЖНО: Замени этот URL на адрес своего запущенного бэкенда (Шаг 4)
         const BACKEND_URL = "http://127.0.0.1:5000";
 
-        try {
-            const response = await fetch(BACKEND_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, phone, country, username })
-            });
+        async function sendOrder() {
+    const name = document.getElementById('userName').value.trim();
+    const phone = document.getElementById('userPhone').value.trim();
+    const country = document.getElementById('userCountry').value.trim();
 
-            if(response.ok) {
-                nextSlide(4);
-            } else {
-                alert("Ошибка при отправке заказа. Попробуйте еще раз.");
-                btn.innerText = "Подтвердить";
-                btn.disabled = false;
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Ошибка сети.");
+    if(!name || !phone || !country) {
+        alert('Пожалуйста, заполните все поля');
+        return;
+    }
+
+    const username = tg.initDataUnsafe?.user?.username || "Не указан";
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "Отправка...";
+    btn.disabled = true;
+
+    // ИСПРАВЛЕНО: Добавлен полный путь к эндпоинту бэкенда
+    const BACKEND_URL = "http://127.0.0.1:5000/api/preorder";
+
+    try {
+        const response = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, phone, country, username })
+        });
+
+        if(response.ok) {
+            nextSlide(4);
+        } else {
+            const errData = await response.json();
+            alert("Ошибка сервера: " + (errData.error || "Неизвестная ошибка"));
             btn.innerText = "Подтвердить";
             btn.disabled = false;
         }
+    } catch (err) {
+        console.error(err);
+        alert("Ошибка сети. Проверь, запущен ли бэкенд!");
+        btn.innerText = "Подтвердить";
+        btn.disabled = false;
     }
+}
 </script>
 </body>
 </html>
