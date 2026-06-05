@@ -1,25 +1,26 @@
+import os
 import random
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Разрешаем запросы от нашей веб-странички
+CORS(app)  # Разрешаем запросы от Mini App
 
-# --- НАСТРОЙКИ (Вставь свои данные) ---
-BOT_TOKEN = "8367392483:AAGVvgKEzJCPcWJIRgxZH_8pgOP6ueCtWL0"
-CHANNEL_ID = "-1003728858401"  # Например, -100123456789
-
+# --- НАСТРОЙКИ ---
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = "-1003728858401" 
 
 @app.route("/api/preorder", methods=["POST"])
 def handle_preorder():
     data = request.json
+    if not data:
+        return jsonify({"error": "Пустой запрос"}), 400
 
     # Получаем данные из формы
     name = data.get("name")
     phone = data.get("phone")
     country = data.get("country")
-    # Юзернейм автоматически подтянется из Telegram Mini App
     username = data.get("username", "Не указан")
 
     if not all([name, phone, country]):
@@ -28,7 +29,7 @@ def handle_preorder():
     # Генерируем рандомный номер заказа
     order_id = random.randint(100000, 999999)
 
-    # Формируем текст поста для менеджера
+    # Формируем текст поста (Используем Markdown)
     message_text = (
         f"📦 **НОВЫЙ ПРЕДЗАКАЗ**\n\n"
         f"🔢 **Номер заказа:** #{order_id}\n"
@@ -51,13 +52,13 @@ def handle_preorder():
         if response.status_code == 200:
             return jsonify({"status": "success", "order_id": order_id}), 200
         else:
-            return (
-                jsonify({"error": "Ошибка отправки в ТГ канал"}),
-                500,
-            )
+            return jsonify({"error": f"Ошибка Telegram: {response.text}"}), 500
+            
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        return jsonify({"error": f"Внутренняя ошибка сервера: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    # Для локальных тестов оставляем порт 5000
+    # На хостинге (например, Render/Railway) подтянется порт из среды
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
