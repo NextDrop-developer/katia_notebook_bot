@@ -128,15 +128,14 @@
             return;
         }
 
-        // Получаем юзернейм клиента напрямую из Телеграма
+        // юзернейм клиента из Телеграма
         const username = tg.initDataUnsafe?.user?.username || "Не указан";
 
         const btn = document.getElementById('submitBtn');
         btn.innerText = "Отправка...";
         btn.disabled = true;
 
-        // Если тестируешь локально на ПК — оставляй этот URL. 
-        // Когда задеплоишь бэк, поменяй на адрес своего сервера.
+        
         const BACKEND_URL = "https://katia-notebook-bot.onrender.com/api/preorder";
 
         try {
