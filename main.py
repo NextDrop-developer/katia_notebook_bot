@@ -5,9 +5,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Разрешаем запросы от твоего Telegram Mini App
+CORS(app)  #запросы Telegram Mini App
 
-# --- НАСТРОЙКИ ---
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = "-1003728858401"
 
@@ -27,7 +27,7 @@ def handle_preorder():
 
     order_id = random.randint(100000, 999999)
 
-    # Экранируем спецсимволы для HTML
+    # спецсимволы для HTML
     safe_name = str(name).replace("<", "&lt;").replace(">", "&gt;")
     safe_phone = str(phone).replace("<", "&lt;").replace(">", "&gt;")
     safe_country = str(country).replace("<", "&lt;").replace(">", "&gt;")
@@ -68,7 +68,7 @@ def handle_preorder():
     except Exception as e:
         return jsonify({"error": f"Внутренняя ошибка сервера: {str(e)}"}), 500
 
-# --- ДОБАВИТЬ ТОЛЬКО ЭТОТ КУСОЧЕК В САМЫЙ НИЗ ПЕРЕД IF __NAME__ ---
+
 
 @app.route("/telegram/webhook", methods=["POST"])
 def telegram_webhook():
